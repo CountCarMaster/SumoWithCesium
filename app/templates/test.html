@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'ajax.js' %}"></script>
+</head>
+<body>
+    <h3>GET 提交数据：</h3>
+    <input type="number" id="num1" />&nbsp;*&nbsp;
+    <input type="number" id="num2" />
+    <script>
+        {#for(var a = 0; a <= 2; a++) {#}
+            {#window.alert(a)#}
+        {#    for(var b = 0; b <= 0; b++) {#}
+        {#        $.get("/ajax/get/", { 'a': a, 'b': b }, function(ret){#}
+                    {#$('#result_get').html(ret);#}
+        {#            var k = Number(ret)#}
+        {##}
+        {#            window.alert(k)#}
+        {#        });#}
+        {#    }#}
+        {# }#}
+        {#$.get("/ajax/get/", { 'a': a, 'b': b }, function(ret) {#}
+            {#$('#result_get').html(ret);#}
+        {#    var k = Number(ret);#}
+        {#    window.alert(k);#}
+        {# })#}
+        var b = 0;
+        for(var a = 0; a <= 2; a++) {
+            $.ajax({
+                type: 'GET',
+                url: "/ajax/get/",
+                data: { 'a': a, 'b': b },
+                async: false,
+                success: function(ret) {
+                    {#$('#result_get').html(ret);#}
+                    var k = Number(ret);
+                    window.alert(k)
+                }
+            });
+        }
+
+    </script>
+    <font style="color:red;"><span id="result_get"></span></font>
+    <hr />
+
+</body>
+</html>

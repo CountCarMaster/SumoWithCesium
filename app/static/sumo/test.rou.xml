@@ -1,0 +1,16 @@
+<routes>
+    <vType id="type1" accel="0.8" decel="4.5" sigma="0.5" length="5" maxSpeed="70"/>
+
+    <vehicle id="veh0" type="type1" depart="0" color="1,0,0">
+      <route edges="-E4 -E1 E2 E6"/>
+    </vehicle>
+
+    <vehicle id="veh1" type="type1" depart="20" color="1,0,0">
+      <route edges="-E5 -E0 E2 E6"/>
+    </vehicle>
+
+    <vehicle id="veh2" type="type1" depart="30" color="1,0,0">
+      <route edges="-E7 -E3 E1 E4"/>
+    </vehicle>
+
+</routes>
