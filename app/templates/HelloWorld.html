@@ -32,6 +32,7 @@
     <div id="test"></div>
     <div id="cesiumContainer"></div>
     <script>
+
       Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4MzM5OTUxNi05NDM1LTRiZjktYTYzZS1jNjdkOGYzODY4MTQiLCJpZCI6MTAyNDg0LCJpYXQiOjE2NTg3NjI5Nzd9.LeY0XxRAw1keEGLweLto2-3HQLLCB3Ulmat8px_u5R8";
       // STEP 4 CODE (replaces steps 2 and 3)
       // Keep your `Cesium.Ion.defaultAccessToken = 'your_token_here'` line from before here.
@@ -91,8 +92,9 @@
                 kk = Number(ret);
             }
         });
-        const dataPoint = { longitude: k, latitude: kk, height: 500 };
-        console.log(dataPoint)
+        var kkk = new Cesium.Cartesian3(k, kk, 6357068.77482456663);
+        var kkkk = Cesium.Cartographic.fromCartesian(kkk)
+        const dataPoint = { longitude: kkkk.longitude, latitude: kkkk.latitude, height: kkkk.height };
 
         // Declare the time for this individual sample and store it in a new JulianDate instance.
         const time = Cesium.JulianDate.addSeconds(start, i * timeStepInSeconds, new Cesium.JulianDate());
