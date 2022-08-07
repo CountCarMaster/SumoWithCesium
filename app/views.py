@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 import pymysql
+import time
 import sys
 from sumolib import checkBinary, net
 import traci
@@ -10,6 +11,7 @@ import subprocess
 def index(request):
     #os.system("python /Users/gankutsuou/Desktop/项目/sync/app/static/sumo/simulation.py")
     subprocess.Popen("python /Users/gankutsuou/Desktop/项目/sync/app/static/sumo/simulation.py", shell=True)
+    time.sleep(2)
     return render(request, "HelloWorld.html")
 
 
