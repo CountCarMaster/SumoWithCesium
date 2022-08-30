@@ -38,124 +38,109 @@
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
-    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4MzM5OTUxNi05NDM1LTRiZjktYTYzZS1jNjdkOGYzODY4MTQiLCJpZCI6MTAyNDg0LCJpYXQiOjE2NTg3NjI5Nzd9.LeY0XxRAw1keEGLweLto2-3HQLLCB3Ulmat8px_u5R8";
-    // STEP 4 CODE (replaces steps 2 and 3)
-    // Keep your `Cesium.Ion.defaultAccessToken = 'your_token_here'` line from before here.
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4MzM5OTUxNi05NDM1LTRiZjktYTYzZS1jNjdkOGYzODY4MTQiLCJpZCI6MTAyNDg0LCJpYXQiOjE2NTg3NjI5Nzd9.LeY0XxRAw1keEGLweLto2-3HQLLCB3Ulmat8px_u5R8';
     const viewer = new Cesium.Viewer('cesiumContainer', {
         terrainProvider: Cesium.createWorldTerrain()
     });
     const osmBuildings = viewer.scene.primitives.add(Cesium.createOsmBuildings());
-
-    viewer.clock.multiplier = 0.5;
-
-    /* Initialize the viewer clock:
-      Assume the radar samples are 30 seconds apart, and calculate the entire flight duration based on that assumption.
-      Get the start and stop date times of the flight, where the start is the known flight departure time (converted from PST
-        to UTC) and the stop is the start plus the calculated duration. (Note that Cesium uses Julian dates. See
-        https://simple.wikipedia.org/wiki/Julian_day.)
-      Initialize the viewer's clock by setting its start and stop to the flight start and stop times we just calculated.
-      Also, set the viewer's current time to the start time and take the user to that time.
-    */
+    const timeStepInSeconds = 1;
+    const totalSeconds = 100;
+    const start = Cesium.JulianDate.fromIso8601("2022-03-09T23:10:00Z");
+    const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
+    viewer.clock.startTime = start.clone();
+    viewer.clock.stopTime = stop.clone();
+    viewer.clock.currentTime = start.clone();
+    viewer.timeline.zoomTo(start, stop);
+    viewer.clock.multiplier = 1;
+    viewer.clock.shouldAnimate = true;
+    const num = 500; // vehicle number.
 
     viewer.camera.setView(
         {
-            destination: Cesium.Cartesian3.fromDegrees(355.9, 1.6, 6357068.77482456663),
+            destination: Cesium.Cartesian3.fromDegrees(114.3159113, 30.54626248, 500),
             orientation: {
-                heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
-                pitch: Cesium.Math.toRadians(-90),    // default value (looking down)
-                roll: 0.0                             // default value
+                heading: Cesium.Math.toRadians(0.0),
+                pitch: Cesium.Math.toRadians(-90),
+                roll: 0.0
             }
         });
-    sleep(2000);
-    var positions = [];
-    var num = 50;
-    for(var i = 0; i < num; i++) {
-        positions.push([]);
+
+    const positionPropertyBox = [];
+
+    for (let i = 0; i < num; i++) {
+        const positionProperty = new Cesium.SampledPositionProperty();
+        positionPropertyBox[i] = positionProperty;
     }
-    const airplaneUri = Cesium.IonResource.fromAssetId(1232489);
-    var czmlinfo = [{
-        "id": "document",
-        "name": "CZML Path",
-        "version": "1.0",
-    }, {
-        "id": "path1",
-        "name": "path with GPS flight data",
-        "availability": "2012-08-04T10:00:00Z/2012-08-04T15:00:00Z",
-        "billboard": {
-            "image": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyMy4wLjMsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0i5Zyw56m65a+85by5XzFfIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiDQoJIHk9IjBweCIgdmlld0JveD0iMCAwIDMyIDMyIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAzMiAzMjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCgkuc3Qwe3N0cm9rZTojMDAwMEZGO3N0cm9rZS1taXRlcmxpbWl0OjEwO30NCgkuc3Qxe2ZpbGw6bm9uZTtzdHJva2U6IzAwMDBGRjtzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQo8L3N0eWxlPg0KPHBvbHlnb24gY2xhc3M9InN0MCIgcG9pbnRzPSIxNS41LDUuMDQgMTIuNSwxMC4yMyAxOC41LDEwLjIzICIvPg0KPGxpbmUgY2xhc3M9InN0MSIgeDE9IjE1LjUiIHkxPSIxMC41IiB4Mj0iMTUuNSIgeTI9IjI2LjUiLz4NCjxsaW5lIGNsYXNzPSJzdDEiIHgxPSIxMi41IiB5MT0iMjYuNSIgeDI9IjE4LjUiIHkyPSIyNi41Ii8+DQo8bGluZSBjbGFzcz0ic3QxIiB4MT0iMTUuNSIgeTE9IjIwLjUiIHgyPSIxMi41IiB5Mj0iMjMuNSIvPg0KPGxpbmUgY2xhc3M9InN0MSIgeDE9IjE4LjUiIHkxPSIyMy41IiB4Mj0iMTUuNSIgeTI9IjIwLjUiLz4NCjwvc3ZnPg0K",
-            "scale": 0.2
-         },
-        {#"model": {#}
-        {#    "uri": airplaneUri,#}
-        {#    "minimumPixalSize": 12000,#}
-        {#    "color": "white"#}
-        {# },#}
-        {#"point": {#}
-        {#    "pixalSize": 12000#}
-        {# },#}
-        "position": {
-            "cartographicDegrees": [118.87826541800007, 30.956799, 0.0,]
-        }
-    }];
-    var numm = 0;
-    var ax = 10000;
-    var bx = 10000;
-    var czmlBox = [];
-    var dataSourceBox = [];
-    var ii = [];
-    var bb = [];
-    for(var i = 0; i < num; i++) {
-        ii.push(ax);
-        bb.push(bx);
-        czmlBox.push(czmlinfo);
-        var DataSource = new Cesium.CzmlDataSource();
-        viewer.dataSources.add(DataSource.load(czmlinfo));
-        dataSourceBox.push(DataSource);
+
+    const airplaneEntity = [];
+
+    async function loadModel(num) {
+        const airplaneUri = await Cesium.IonResource.fromAssetId(1289411);
+        airplaneEntity[num] = viewer.entities.add({
+            availability: new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({start: start, stop: stop})]),
+            position: positionPropertyBox[num],
+            model: {
+                uri: airplaneUri,
+                scale: 4
+            },
+            orientation: new Cesium.VelocityOrientationProperty(positionPropertyBox[num]),
+            path: new Cesium.PathGraphics({width: 3})
+        });
     }
-    var realTimeClData = setInterval(function () {
-        numm += 1;
-        for (var i = 0; i < num; i++) {
-            var k = 0;
-            var kk = 0;
-            {#console.log(numm);#}
-            {#console.log(i);#}
-            $.ajax({
-                type: 'GET',
-                url: "/ajax/get/",
-                data: {'a': numm, 'b': i},
-                async: false,
-                success: function (ret) {
-                    {#$('#result_get').html(ret);#}
-                    k = Number(ret);
+
+    let tmp = -1;
+
+    async function main() {
+        for (let i = 0; i < totalSeconds; i++) {
+            await sleep(200);
+            for (let j = 0; j < num; j++) {
+                let k = 0;
+                let kk = 0;
+                $.ajax({
+                    type: 'GET',
+                    url: "/ajax/get/",
+                    data: {'a': i, 'b': j},
+                    async: false,
+                    success: function (ret) {
+                        k = Number(ret);
+                    }
+                });
+                $.ajax({
+                    type: 'GET',
+                    url: "/ajax/get2/",
+                    data: {'a': i, 'b': j},
+                    async: false,
+                    success: function (ret) {
+                        kk = Number(ret);
+                    }
+                });
+
+                if (k === 0) {
+                    break;
                 }
-            });
-            console.log(k);
-            $.ajax({
-                type: 'GET',
-                url: "/ajax/get2/",
-                data: {'a': numm, 'b': i},
-                async: false,
-                success: function (ret) {
-                    {#$('#result_get').html(ret);#}
-                    kk = Number(ret);
+
+                if (j > tmp) {
+                    tmp = j;
+                    loadModel(j);
                 }
-            });
-            if(k === 0) {
-                break;
+
+
+                const time = Cesium.JulianDate.addSeconds(start, i * timeStepInSeconds, new Cesium.JulianDate());
+                const position = Cesium.Cartesian3.fromDegrees(k, kk, 40);
+                // Store the position along with its timestamp.
+                // Here we add the positions all upfront, but these can be added at run-time as samples are received from a server.
+                positionPropertyBox[j].addSample(time, position);
+
+                viewer.entities.add({
+                    description: `Location: (${k}, ${kk}, ${40})`,
+                    position: position,
+                    point: {pixelSize: 10, color: Cesium.Color.RED}
+                 });
             }
-            ii[i] = k;
-            bb[i] = kk;
-            //图标
-            var loca_1 = new Cesium.Cartesian3(ii[i], bb[i], 6356068.77482456663);
-            var loca_2 = Cesium.Cartographic.fromCartesian(loca_1);
-            czmlBox[i][1].position.cartographicDegrees = [loca_2.longitude, loca_2.latitude, 0];
-            {#czmlBox[i][1].position.cartesian2 = [bb[i], ii[i]];#}
-            dataSourceBox[i].process(czmlBox[i]);
-            {#console.log(numm);#}
-            {#console.log(k);#}
-            {#console.log(kk);#}
         }
-    }, 1000);
+    }
+
+    main();
 </script>
 </body>
 </html>

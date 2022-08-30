@@ -19,7 +19,7 @@ from app import views
 
 urlpatterns = [
     path('index/', views.index),
-    path('ajax/index/', views.ajax_index),
+    path('iindex/', views.iindex),
     path('ajax/get/', views.ajax_get),
     path('ajax/get2/', views.ajax_get2),
 ]

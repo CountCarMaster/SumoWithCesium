@@ -26,7 +26,8 @@ def run():  # 所需要进行的操作就放在这里面
         id_list = traci.vehicle.getIDList()
         for i in id_list:
             tt = traci.vehicle.getPosition(i)
-            sql = "insert into data(TIMEID, CARID, LONGITUDE, LATITUDE) VALUES(%s, '%s', %s, %s)" % (step, i, tt[0], tt[1])
+            lon, lat = nett.convertXY2LonLat(tt[0], tt[1])
+            sql = "insert into data(TIMEID, CARID, LONGITUDE, LATITUDE) VALUES(%s, '%s', %s, %s)" % (step, i, lon, lat)
             try:
                 cursor.execute(sql)
                 db.commit()

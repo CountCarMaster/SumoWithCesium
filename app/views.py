@@ -15,8 +15,8 @@ def index(request):
     return render(request, "HelloWorld.html")
 
 
-def ajax_index(request):
-    return render(request, 'test.html')
+def iindex(request):
+    return render(request, 'HelloWorld.html')
 
 
 def ajax_get(request):
