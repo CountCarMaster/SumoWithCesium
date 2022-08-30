@@ -84,7 +84,7 @@
                 scale: 4
             },
             orientation: new Cesium.VelocityOrientationProperty(positionPropertyBox[num]),
-            path: new Cesium.PathGraphics({width: 3})
+            {#path: new Cesium.PathGraphics({width: 3})#}
         });
     }
 
@@ -127,15 +127,13 @@
 
                 const time = Cesium.JulianDate.addSeconds(start, i * timeStepInSeconds, new Cesium.JulianDate());
                 const position = Cesium.Cartesian3.fromDegrees(k, kk, 40);
-                // Store the position along with its timestamp.
-                // Here we add the positions all upfront, but these can be added at run-time as samples are received from a server.
                 positionPropertyBox[j].addSample(time, position);
 
-                viewer.entities.add({
-                    description: `Location: (${k}, ${kk}, ${40})`,
-                    position: position,
-                    point: {pixelSize: 10, color: Cesium.Color.RED}
-                 });
+                {#viewer.entities.add({#}
+                {#    description: `Location: (${k}, ${kk}, ${40})`,#}
+                {#    position: position,#}
+                {#    point: {pixelSize: 10, color: Cesium.Color.RED}#}
+                {# });#}
             }
         }
     }
